@@ -4,6 +4,7 @@ import { useAppContext } from "@/context/app-context"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useTheme } from "next-themes"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,10 +19,21 @@ import {
 
 export function Header() {
   const { projectName, setProjectName, resetState, tasks } = useAppContext()
+  const { theme, setTheme } = useTheme()
 
   const handlePrint = () => {
+    // Store current theme to restore after printing
+    const currentTheme = theme
+    const isDarkMode = theme === 'dark'
+    
     // Set up print-specific optimizations
     const beforePrint = () => {
+      // Force light mode for printing if currently in dark mode
+      if (isDarkMode) {
+        document.documentElement.classList.remove('dark')
+        document.documentElement.classList.add('light')
+      }
+      
       // Ensure all colors are properly set
       document.body.classList.add('printing')
       
@@ -41,6 +53,12 @@ export function Header() {
     }
     
     const afterPrint = () => {
+      // Restore original theme after printing
+      if (isDarkMode) {
+        document.documentElement.classList.remove('light')
+        document.documentElement.classList.add('dark')
+      }
+      
       document.body.classList.remove('printing')
     }
     
