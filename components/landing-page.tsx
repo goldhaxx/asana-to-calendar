@@ -213,7 +213,7 @@ export function LandingPage() {
               <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
                 <li>Open your Asana project</li>
                 <li>Click the three dots menu (...) in the top right</li>
-                <li>Select "Export/Print" → "JSON"</li>
+                <li>Select &quot;Export/Print&quot; → &quot;JSON&quot;</li>
                 <li>Save the file and upload it here</li>
               </ol>
             </div>

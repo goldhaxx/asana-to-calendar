@@ -42,7 +42,7 @@ export function CalendarView() {
       })
   }, [tasks, sections, showCompleted])
 
-  const handleEventClick = (clickInfo: any) => {
+  const handleEventClick = (clickInfo: { event: { extendedProps: { url?: string } } }) => {
     if (clickInfo.event.extendedProps.url) {
       window.open(clickInfo.event.extendedProps.url, "_blank")
     }
