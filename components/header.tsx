@@ -19,11 +19,9 @@ import {
 
 export function Header() {
   const { projectName, setProjectName, resetState, tasks } = useAppContext()
-  const { theme, setTheme } = useTheme()
+  const { theme } = useTheme()
 
   const handlePrint = () => {
-    // Store current theme to restore after printing
-    const currentTheme = theme
     const isDarkMode = theme === 'dark'
     
     // Set up print-specific optimizations
