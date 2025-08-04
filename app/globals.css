@@ -2,26 +2,449 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  .gradient-bg {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.1) 0%, hsl(var(--secondary) / 0.5) 100%);
+  }
+  
+  .glass-effect {
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+}
+
+/* Print-specific styles */
+@media print {
+  /* Page setup for landscape orientation and optimal fit */
+  @page {
+    size: landscape;
+    margin: 0.3in 0.15in;
+  }
+  
+  /* Hide all interactive elements */
+  .fc-toolbar,
+  .fc-button,
+  .fc-button-group,
+  .fc-toolbar-chunk,
+  .print\:hidden {
+    display: none !important;
+  }
+  
+  /* Optimize layout for print */
+  body {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Calendar container optimization - more conservative approach */
+  .fc {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  
+  .fc-view-harness {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  
+  .fc-daygrid {
+    width: 100% !important;
+  }
+  
+  /* Month view optimization */
+  .fc-daygrid-body {
+    width: 100% !important;
+  }
+  
+  /* Force equal column widths - more targeted */  
+  .fc-daygrid-day {
+    min-height: 90px !important;
+    max-height: 110px !important;
+  }
+  
+  .fc-col-header-cell {
+    height: 40px !important;
+  }
+  
+  /* Apply fixed width only to specific tables */
+  .fc-col-header .fc-scrollgrid-sync-table,
+  .fc-daygrid-body .fc-scrollgrid-sync-table {
+    table-layout: fixed !important;
+    width: 100% !important;
+  }
+  
+  .fc-col-header .fc-scrollgrid-sync-table th,
+  .fc-daygrid-body .fc-scrollgrid-sync-table td {
+    width: 14.285714% !important; /* 100% / 7 = 14.285714% */
+  }
+  
+  /* Event styling - force colors and proper text visibility */
+  .fc-event {
+    background-color: var(--event-bg-color) !important;
+    border-color: var(--event-bg-color) !important;
+    color: white !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    opacity: 1 !important;
+    font-weight: 500 !important;
+    padding: 1px 3px !important;
+    margin: 1px 0 !important;
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    height: auto !important;
+    max-height: 16px !important;
+    overflow: hidden !important;
+  }
+  
+  .fc-event-title {
+    color: white !important;
+    font-weight: 500 !important;
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  .fc-event-main {
+    color: white !important;
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    height: auto !important;
+    max-height: 14px !important;
+    overflow: hidden !important;
+  }
+  
+  /* Completed task styling */
+  .fc-event.opacity-40 {
+    opacity: 0.7 !important;
+    background-color: var(--event-bg-color) !important;
+    color: white !important;
+    text-decoration: line-through;
+  }
+  
+  /* Day headers */
+  .fc-col-header-cell {
+    background-color: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    font-weight: bold !important;
+  }
+  
+  /* Day numbers */
+  .fc-daygrid-day-number {
+    font-weight: bold !important;
+    color: #333 !important;
+    font-size: 14px !important;
+    padding: 2px !important;
+  }
+  
+  /* Print header optimization */
+  .print-header {
+    height: auto !important;
+    margin-bottom: 8px !important;
+    padding: 8px 0 !important;
+  }
+  
+  .print-header h1 {
+    font-size: 20px !important;
+    margin: 0 !important;
+  }
+  
+  .print-header p {
+    font-size: 12px !important;
+    margin: 0 !important;
+  }
+  
+  /* Grid lines */
+  .fc-daygrid-day {
+    border-color: #dee2e6 !important;
+  }
+  
+  /* Title and header styling */
+  .fc-toolbar-title {
+    font-size: 24px !important;
+    font-weight: bold !important;
+    color: #333 !important;
+  }
+  
+  /* Remove any hover effects */
+  .fc-event:hover {
+    background-color: var(--event-bg-color) !important;
+    color: white !important;
+  }
+  
+  /* Ensure proper month view layout */
+  .fc-daygrid-event {
+    background-color: var(--event-bg-color) !important;
+    border-color: var(--event-bg-color) !important;
+    color: white !important;
+  }
+  
+  /* Fix FullCalendar print issues - conservative approach */
+  .fc-scrollgrid {
+    width: 100% !important;
+  }
+  
+  .fc-scrollgrid-section > * {
+    overflow: visible !important;
+  }
+  
+  /* Ensure consistent column widths */
+  .fc-daygrid-day-frame {
+    min-height: 90px !important;
+    max-height: 110px !important;
+  }
+  
+  /* Compact print layout */
+  .fc-daygrid-body-unbalanced .fc-daygrid-day,
+  .fc-daygrid-body-natural .fc-daygrid-day {
+    height: 95px !important;
+  }
+  
+  /* Target specific elements for width distribution */
+  .fc-scrollgrid-sync-table tr th,
+  .fc-scrollgrid-sync-table tr td {
+    width: 14.285714% !important;
+  }
+  
+  /* Week header optimization */
+  .fc-col-header-row {
+    background-color: #f8f9fa !important;
+  }
+  
+  /* More aggressive event color forcing */
+  .fc-event-main-frame,
+  .fc-event-title-container,
+  .fc-event-title {
+    color: white !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* Additional print optimizations for when printing class is active */
+body.printing {
+  overflow: visible !important;
+}
+
+body.printing .fc {
+  height: auto !important;
+  max-height: 7.5in !important;
+}
+
+body.printing .fc-view-harness {
+  height: auto !important;
+  max-height: 7in !important;
+  overflow: visible !important;
+}
+
+body.printing .fc-daygrid-view {
+  height: auto !important;
+  max-height: 6.5in !important;
+}
+
+body.printing .fc-daygrid-body {
+  overflow-x: visible !important;
+}
+
+body.printing .fc-scroller {
+  overflow: visible !important;
+}
+
+/* Force recalculation of FullCalendar layout during print */
+body.printing .fc-scrollgrid-liquid {
+  width: 100% !important;
+}
+
+  /* Simplified print layout enforcement */
+@media print {
+  /* Ensure no horizontal scrolling affects layout */
+  body, html {
+    overflow-x: visible !important;
+  }
+  
+  /* Ensure calendar is visible and properly sized */
+  .fc,
+  .fc-view-harness,
+  .fc-daygrid-view,
+  .fc-daygrid-body {
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  /* Control calendar dimensions for print */
+  .fc {
+    max-height: 7.5in !important;
+    height: auto !important;
+  }
+  
+  .fc-view-harness {
+    max-height: 7in !important;
+  }
+  
+  .fc-daygrid-view {
+    max-height: 6.5in !important;
+  }
+  
+  /* Compact header and day cells */
+  .fc-col-header-cell {
+    height: 35px !important;
+    padding: 4px !important;
+  }
+  
+  .fc-daygrid-day {
+    height: 90px !important;
+    max-height: 90px !important;
+    overflow: hidden !important;
+  }
+  
+  .fc-daygrid-day-frame {
+    height: 88px !important;
+    max-height: 88px !important;
+  }
+  
+  /* Force table display for grid structure */
+  .fc-scrollgrid {
+    display: table !important;
+  }
+  
+  .fc-scrollgrid-section {
+    display: table-row-group !important;
+  }
+  
+  .fc-col-header-row,
+  .fc-daygrid-body tr {
+    display: table-row !important;
+  }
+  
+  .fc-col-header-cell,
+  .fc-daygrid-day {
+    display: table-cell !important;
+  }
+}
+
+/* Direct color rules for the standard color palette */
+@media print {
+  /* Color palette from COLOR_PALETTE array */
+  .fc-event[style*="#1E90FF"], .fc-event[data-color="#1E90FF"] { background-color: #1E90FF !important; border-color: #1E90FF !important; }
+  .fc-event[style*="#FF7F50"], .fc-event[data-color="#FF7F50"] { background-color: #FF7F50 !important; border-color: #FF7F50 !important; }
+  .fc-event[style*="#32CD32"], .fc-event[data-color="#32CD32"] { background-color: #32CD32 !important; border-color: #32CD32 !important; }
+  .fc-event[style*="#FFB400"], .fc-event[data-color="#FFB400"] { background-color: #FFB400 !important; border-color: #FFB400 !important; }
+  .fc-event[style*="#BA55D3"], .fc-event[data-color="#BA55D3"] { background-color: #BA55D3 !important; border-color: #BA55D3 !important; }
+  .fc-event[style*="#FF69B4"], .fc-event[data-color="#FF69B4"] { background-color: #FF69B4 !important; border-color: #FF69B4 !important; }
+  .fc-event[style*="#20B2AA"], .fc-event[data-color="#20B2AA"] { background-color: #20B2AA !important; border-color: #20B2AA !important; }
+  .fc-event[style*="#F08080"], .fc-event[data-color="#F08080"] { background-color: #F08080 !important; border-color: #F08080 !important; }
+  .fc-event[style*="#DAA520"], .fc-event[data-color="#DAA520"] { background-color: #DAA520 !important; border-color: #DAA520 !important; }
+  .fc-event[style*="#708090"], .fc-event[data-color="#708090"] { background-color: #708090 !important; border-color: #708090 !important; }
+  
+  /* Force inline styles to take precedence */
+  .fc-event[style] {
+    background-color: inherit !important;
+    border-color: inherit !important;
+  }
+  
+  /* Color class-based rules for additional targeting */
+  .fc-event.color-1e90ff { background-color: #1E90FF !important; border-color: #1E90FF !important; }
+  .fc-event.color-ff7f50 { background-color: #FF7F50 !important; border-color: #FF7F50 !important; }
+  .fc-event.color-32cd32 { background-color: #32CD32 !important; border-color: #32CD32 !important; }
+  .fc-event.color-ffb400 { background-color: #FFB400 !important; border-color: #FFB400 !important; }
+  .fc-event.color-ba55d3 { background-color: #BA55D3 !important; border-color: #BA55D3 !important; }
+  .fc-event.color-ff69b4 { background-color: #FF69B4 !important; border-color: #FF69B4 !important; }
+  .fc-event.color-20b2aa { background-color: #20B2AA !important; border-color: #20B2AA !important; }
+  .fc-event.color-f08080 { background-color: #F08080 !important; border-color: #F08080 !important; }
+  .fc-event.color-daa520 { background-color: #DAA520 !important; border-color: #DAA520 !important; }
+  .fc-event.color-708090 { background-color: #708090 !important; border-color: #708090 !important; }
+  
+  /* Simplified width enforcement */
+  .fc-col-header-cell-cushion,
+  .fc-daygrid-day-number {
+    width: 100% !important;
+  }
+  
+  /* Prevent content from affecting column widths */
+  .fc-daygrid-event-harness {
+    box-sizing: border-box !important;
+  }
+}
+
+
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
