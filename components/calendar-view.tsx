@@ -43,13 +43,16 @@ export function CalendarView() {
   }, [tasks, sections, showCompleted])
 
   const handleEventClick = (clickInfo: { event: { extendedProps: { url?: string } } }) => {
-    if (clickInfo.event.extendedProps.url) {
+    if (clickInfo.event.extendedProps.url && typeof window !== 'undefined') {
       window.open(clickInfo.event.extendedProps.url, "_blank")
     }
   }
 
   // Inject CSS custom properties for event colors to ensure print compatibility
   React.useEffect(() => {
+    // Check if we're in a browser environment
+    if (typeof document === 'undefined') return
+
     // Remove existing style if it exists
     const existingStyle = document.getElementById('fc-event-colors')
     if (existingStyle) {
@@ -102,9 +105,11 @@ export function CalendarView() {
     document.head.appendChild(style)
     
     return () => {
-      const styleToRemove = document.getElementById('fc-event-colors')
-      if (styleToRemove) {
-        document.head.removeChild(styleToRemove)
+      if (typeof document !== 'undefined') {
+        const styleToRemove = document.getElementById('fc-event-colors')
+        if (styleToRemove) {
+          document.head.removeChild(styleToRemove)
+        }
       }
     }
   }, [events, sections])

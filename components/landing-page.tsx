@@ -88,9 +88,11 @@ export function LandingPage() {
                   size="lg"
                   className="text-lg px-8 py-6 h-auto glass-effect hover:bg-accent/50 transition-all duration-300"
                   onClick={() => {
-                    document.getElementById('features')?.scrollIntoView({ 
-                      behavior: 'smooth' 
-                    });
+                    if (typeof document !== 'undefined') {
+                      document.getElementById('features')?.scrollIntoView({ 
+                        behavior: 'smooth' 
+                      });
+                    }
                   }}
                 >
                   Learn More

@@ -1,4 +1,5 @@
 "use client"
+import React from "react"
 import { CalendarIcon, PrinterIcon, Trash2Icon } from "lucide-react"
 import { useAppContext } from "@/context/app-context"
 import { Input } from "@/components/ui/input"
@@ -20,58 +21,90 @@ import {
 export function Header() {
   const { projectName, setProjectName, resetState, tasks } = useAppContext()
   const { theme } = useTheme()
+  const [isPrinting, setIsPrinting] = React.useState(false)
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
+    // Prevent multiple simultaneous print operations
+    if (isPrinting) return
+    
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') return
+    
+    setIsPrinting(true)
     const isDarkMode = theme === 'dark'
     
-    // Set up print-specific optimizations
+    // Use requestAnimationFrame to yield to the browser and improve INP
+    const requestAnimationFrame = (fn: () => void) => {
+      return new Promise<void>(resolve => {
+        window.requestAnimationFrame(() => {
+          fn()
+          resolve()
+        })
+      })
+    }
+    
+    // Optimized beforePrint function with minimal synchronous operations
     const beforePrint = () => {
-      // Force light mode for printing if currently in dark mode
+      // Check if we're in a browser environment
+      if (typeof window === 'undefined' || typeof document === 'undefined') return
+      
+      // Essential synchronous DOM changes for print mode
       if (isDarkMode) {
         document.documentElement.classList.remove('dark')
         document.documentElement.classList.add('light')
       }
-      
-      // Ensure all colors are properly set
       document.body.classList.add('printing')
       
-      // Force recalculation of calendar layout
-      const fcElement = document.querySelector('.fc')
-      if (fcElement) {
-        fcElement.dispatchEvent(new Event('resize'))
-      }
-      
-      // Gentle adjustment for equal column widths
-      setTimeout(() => {
-        const dayCells = document.querySelectorAll('.fc-daygrid-day, .fc-col-header-cell')
-        dayCells.forEach(cell => {
-          (cell as HTMLElement).style.width = '14.285714%'
-        })
-      }, 100)
+      // Schedule layout adjustments asynchronously to avoid blocking
+      window.requestAnimationFrame(() => {
+        const fcElement = document.querySelector('.fc')
+        if (fcElement) {
+          fcElement.dispatchEvent(new Event('resize'))
+        }
+        
+        // Apply column width adjustments with minimal delay
+        setTimeout(() => {
+          const dayCells = document.querySelectorAll('.fc-daygrid-day, .fc-col-header-cell')
+          dayCells.forEach(cell => {
+            (cell as HTMLElement).style.width = '14.285714%'
+          })
+        }, 25) // Further reduced delay
+      })
     }
     
     const afterPrint = () => {
+      // Check if we're in a browser environment
+      if (typeof window === 'undefined' || typeof document === 'undefined') return
+      
       // Restore original theme after printing
       if (isDarkMode) {
         document.documentElement.classList.remove('light')
         document.documentElement.classList.add('dark')
       }
-      
       document.body.classList.remove('printing')
+      setIsPrinting(false)
     }
     
-    // Set up print event listeners
+    // Set up print event listeners (browser environment already checked above)
     window.addEventListener('beforeprint', beforePrint)
     window.addEventListener('afterprint', afterPrint)
     
-    // Trigger print
-    window.print()
+    // Yield to browser before triggering print dialog
+    await requestAnimationFrame(() => {
+      window.print()
+    })
     
-    // Clean up listeners
+    // Clean up listeners with reduced timeout and error handling
     setTimeout(() => {
-      window.removeEventListener('beforeprint', beforePrint)
-      window.removeEventListener('afterprint', afterPrint)
-    }, 1000)
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('beforeprint', beforePrint)
+        window.removeEventListener('afterprint', afterPrint)
+      }
+      // Ensure isPrinting is reset even if afterPrint doesn't fire
+      if (isPrinting) {
+        setIsPrinting(false)
+      }
+    }, 500) // Reduced from 1000ms
   }
 
   return (
@@ -93,11 +126,15 @@ export function Header() {
           variant="outline"
           size="icon"
           onClick={handlePrint}
-          disabled={tasks.length === 0}
+          disabled={tasks.length === 0 || isPrinting}
           aria-label="Print Calendar"
           className="hover:bg-accent transition-colors"
         >
-          <PrinterIcon className="h-4 w-4" />
+          {isPrinting ? (
+            <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+          ) : (
+            <PrinterIcon className="h-4 w-4" />
+          )}
         </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>
