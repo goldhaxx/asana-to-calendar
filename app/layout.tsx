@@ -17,7 +17,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Asana to Calendar - Transform Tasks into Visual Timelines",
+  title: "Asana Task Calendar",
   description: "Transform your Asana project exports into beautiful, interactive calendars. Visualize deadlines, track progress, and plan your work like never before. Free and easy to use.",
 };
 
